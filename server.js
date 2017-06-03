@@ -1,49 +1,27 @@
-var natural = require('natural');
 var readline = require('readline');
 var clc = require('cli-color');
+var util = require('util')
+
+var settings = require('./settings');
+var classifier = require('./component/classifier');
 
 var rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
 
-var fileDatabase = './data/classifier.json';
-var classifier;
-
-natural.BayesClassifier.load(fileDatabase, null, function(err, fileClassifier) {
-
-    classifier = fileClassifier;
-
-    if ('undefined' === typeof classifier) {
-        classifier = new natural.BayesClassifier();
-    }
-
-    question('Bonjour !');
+classifier.load(function () {
+    question();
 });
 
-function question(text) {
-    rl.question(clc.blue(text) + "\n", function (answer) {
-        try {
-            question(say(classifier.classify(answer)), true);
-        } catch (e) {
-            console.log(clc.red('[DEBUG] training'));
-            training(answer);
+function question() {
+    rl.question(clc.blue("Quelle est votre question ?") + "\n", function (answer) {
+        var result = classifier.classify(answer);
+        if (!result.service) {
+            return;
         }
+        console.log(util.inspect(result, {showHidden: false, depth: null}));
+        //require('./component/service/' + result.service)(result.documents);
+        question();
     });
-}
-
-function training(answer) {
-    rl.question(clc.yellow('Je n\'ai pas compris la question, entrainement : '), function (action) {
-        console.log(clc.red('[DEBUG] addDocument ' + action));
-        classifier.addDocument(answer, action);
-        classifier.train();
-        classifier.save(fileDatabase, function(err, classifier) {});
-        question(say(action));
-    });
-}
-
-function say(action) {
-    console.log(clc.red('[DEBUG] classify ' + action));
-    return (new Date()).toLocaleDateString();
-    //return require('./plugins/' + action)();
 }
