@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "dependencies": {
     "cli-color": "^1.2.0",
+    "cylon": "^1.3.0",
+    "cylon-speech": "^0.10.0",
+    "events": "^1.1.1",
     "fs": "0.0.1-security",
     "glob": "^7.1.2",
     "js-yaml": "^3.8.4",

@@ -1,21 +1,13 @@
-var fs = require('fs');
-var slugify = require('slugify');
+const fs = require('fs');
+const slugify = require('slugify');
 
-var settings = require('./../settings');
+const settings = require('./../settings');
+const events = require('./events');
 
-module.exports = {
+const classifier = {
     data: {
         services: {},
         documents: {}
-    },
-    load: function (callback) {
-        var self = this;
-        fs.access(settings.classifierFile, fs.constants.R_OK | fs.constants.W_OK, function (err) {
-            if (!err) {
-                self.data = JSON.parse(fs.readFileSync(settings.classifierFile, settings.charset));
-            }
-            callback();
-        });
     },
     addDocument: function (category, document) {
         if ('undefined' === typeof this.data.documents[category]) {
@@ -31,7 +23,7 @@ module.exports = {
         this.data.documents[category][this.slugify(document.name)] = document;
     },
     addDocuments: function (category, documents) {
-        for (var documentIndex in documents) {
+        for (const documentIndex in documents) {
             if (!documents.hasOwnProperty(documentIndex)) {
                 continue;
             }
@@ -45,7 +37,7 @@ module.exports = {
         this.data.services[category][this.slugify(service)] = service;
     },
     addServices: function (category, services) {
-        for (var serviceIndex in services) {
+        for (const serviceIndex in services) {
             if (!services.hasOwnProperty(serviceIndex)) {
                 continue;
             }
@@ -56,14 +48,14 @@ module.exports = {
         fs.writeFile(settings.classifierFile, JSON.stringify(this.data), settings.charset);
     },
     tokenize: function (str) {
-        var words = str.replace(/["']+/gi, ' ').split(/\s/);
-        for (var wordIndex in words) {
+        const words = str.replace(/["']+/gi, ' ').split(/\s/);
+        for (const wordIndex in words) {
             if (!words.hasOwnProperty(wordIndex)) {
                 continue;
             }
             words[wordIndex] = this.slugify(words[wordIndex]);
         }
-        for (var wordIndex in words) {
+        for (const wordIndex in words) {
             if (!words.hasOwnProperty(wordIndex)) {
                 continue;
             }
@@ -77,17 +69,17 @@ module.exports = {
         return slugify(str).toLowerCase();
     },
     classify: function (str) {
-        var classifier = {
+        const classifier = {
             service: null,
             documents: {}
         };
-        var tokens = this.tokenize(str);
-        for (var tokenIndex in tokens) {
+        const tokens = this.tokenize(str);
+        for (const tokenIndex in tokens) {
             if (!tokens.hasOwnProperty(tokenIndex)) {
                 continue;
             }
-            var token = tokens[tokenIndex];
-            for (var serviceIndex in this.data.services) {
+            const token = tokens[tokenIndex];
+            for (const serviceIndex in this.data.services) {
                 if (!this.data.services.hasOwnProperty(serviceIndex)) {
                     continue;
                 }
@@ -95,7 +87,7 @@ module.exports = {
                     classifier.service = serviceIndex;
                 }
             }
-            for (var documentIndex in this.data.documents) {
+            for (const documentIndex in this.data.documents) {
                 if (!this.data.documents.hasOwnProperty(documentIndex)) {
                     continue;
                 }
@@ -110,3 +102,10 @@ module.exports = {
         return classifier;
     }
 };
+
+fs.access(settings.classifierFile, fs.constants.R_OK | fs.constants.W_OK, function (err) {
+    if (!err) {
+        classifier.data = JSON.parse(fs.readFileSync(settings.classifierFile, settings.charset));
+    }
+    events.emit('classifier', classifier);
+});

@@ -1,26 +1,30 @@
-var glob = require('glob');
-var fs = require('fs');
-var yaml = require('js-yaml');
-var clc = require('cli-color');
+const glob = require('glob');
+const fs = require('fs');
+const yaml = require('js-yaml');
+const clc = require('cli-color');
 
-var settings = require('./settings');
-var classifier = require('./component/classifier');
+const settings = require('./settings');
+const events = require('./component/events');
 
-classifier.load(function () {
+require('./component/classifier');
+
+events.on('classifier', function(classifier) {
+
+    console.log(clc.green('✔ Chargement de la base de donnée'));
 
     glob(settings.trainningDirectory + '/documents/*.yml', function (er, files) {
 
-        for (var fileIndex in files) {
+        for (const fileIndex in files) {
             if (!files.hasOwnProperty(fileIndex)) {
                 continue;
             }
-            var file = files[fileIndex];
-            var data = yaml.safeLoad(fs.readFileSync(file, settings.charset));
-            for (var category in data) {
+            const file = files[fileIndex];
+            const data = yaml.safeLoad(fs.readFileSync(file, settings.charset));
+            for (const category in data) {
                 if (!data.hasOwnProperty(category)) {
                     continue;
                 }
-                var documents = data[category];
+                const documents = data[category];
                 classifier.addDocuments(category, documents);
                 console.log(clc.green('✔ ' + documents.length + ' document(s) added to ' + category));
             }
@@ -31,17 +35,17 @@ classifier.load(function () {
 
     glob(settings.trainningDirectory + '/services/*.yml', function (er, files) {
 
-        for (var fileIndex in files) {
+        for (const fileIndex in files) {
             if (!files.hasOwnProperty(fileIndex)) {
                 continue;
             }
-            var file = files[fileIndex];
-            var data = yaml.safeLoad(fs.readFileSync(file, settings.charset));
-            for (var category in data) {
+            const file = files[fileIndex];
+            const data = yaml.safeLoad(fs.readFileSync(file, settings.charset));
+            for (const category in data) {
                 if (!data.hasOwnProperty(category)) {
                     continue;
                 }
-                var services = data[category];
+                const services = data[category];
                 classifier.addServices(category, services);
                 console.log(clc.green('✔ ' + services.length + ' service(s) added to ' + category));
             }
@@ -49,6 +53,4 @@ classifier.load(function () {
 
         classifier.save();
     });
-
-
 });
