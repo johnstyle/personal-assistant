@@ -9,18 +9,24 @@ const classifier = {
         services: {},
         documents: {}
     },
-    addDocument: function (category, document) {
-        if ('undefined' === typeof this.data.documents[category]) {
-            this.data.documents[category] = {};
+    addData: function (type, category, data) {
+        if ('undefined' === typeof this.data[type][category]) {
+            this.data[type][category] = {};
         }
-        if ('object' !== typeof document) {
-            document = {
-                name: document,
-                type: null,
-                value: null
+        if ('object' !== typeof data) {
+            data = {
+                name: data,
             };
         }
-        this.data.documents[category][this.slugify(document.name)] = document;
+        data = Object.assign({
+            name: null,
+            type: null,
+            value: null
+        }, data);
+        this.data[type][category][this.slugify(data.name)] = data;
+    },
+    addDocument: function (category, document) {
+        this.addData('documents', category, document);
     },
     addDocuments: function (category, documents) {
         for (const documentIndex in documents) {
@@ -31,10 +37,7 @@ const classifier = {
         }
     },
     addService: function (category, service) {
-        if ('undefined' === typeof this.data.services[category]) {
-            this.data.services[category] = {};
-        }
-        this.data.services[category][this.slugify(service)] = service;
+        this.addData('services', category, service);
     },
     addServices: function (category, services) {
         for (const serviceIndex in services) {
@@ -69,36 +72,31 @@ const classifier = {
         return slugify(str).toLowerCase();
     },
     classify: function (str) {
+        const self = this;
         const classifier = {
-            service: null,
+            services: {},
             documents: {}
         };
-        const tokens = this.tokenize(str);
-        for (const tokenIndex in tokens) {
-            if (!tokens.hasOwnProperty(tokenIndex)) {
-                continue;
-            }
-            const token = tokens[tokenIndex];
-            for (const serviceIndex in this.data.services) {
-                if (!this.data.services.hasOwnProperty(serviceIndex)) {
-                    continue;
-                }
-                if (token in this.data.services[serviceIndex]) {
-                    classifier.service = serviceIndex;
-                }
-            }
-            for (const documentIndex in this.data.documents) {
-                if (!this.data.documents.hasOwnProperty(documentIndex)) {
-                    continue;
-                }
-                if (token in this.data.documents[documentIndex]) {
-                    if ('undefined' === typeof classifier.documents[documentIndex]) {
-                        classifier.documents[documentIndex] = [];
+        this.tokenize(str).forEach(function(token) {
+            Object.keys(self.data.services).forEach(function(category) {
+                const services = self.data.services[category];
+                if (token in services) {
+                    if ('undefined' === typeof classifier.services[category]) {
+                        classifier.services[category] = [];
                     }
-                    classifier.documents[documentIndex].push(this.data.documents[documentIndex][token]);
+                    classifier.services[category].push(services[token]);
                 }
-            }
-        }
+            });
+            Object.keys(self.data.documents).forEach(function(category) {
+                const documents = self.data.documents[category];
+                if (token in documents) {
+                    if ('undefined' === typeof classifier.documents[category]) {
+                        classifier.documents[category] = [];
+                    }
+                    classifier.documents[category].push(documents[token]);
+                }
+            });
+        });
         return classifier;
     }
 };

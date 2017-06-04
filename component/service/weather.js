@@ -6,7 +6,7 @@ weather.setLang(settings.services.weather.lang);
 weather.setUnits(settings.services.weather.units);
 weather.setAPPID(settings.services.weather.key);
 
-module.exports = function (documents, callback) {
+module.exports = function (service, documents, callback) {
 
     if ('undefined' === typeof documents.location) {
         console.log('Veuillez renseigner une localisation');
