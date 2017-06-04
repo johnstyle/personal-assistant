@@ -1,4 +1,5 @@
-class Events extends require('events') {}
-const events = new Events();
+class Events extends require('events') {
 
-module.exports = events;
+}
+
+module.exports = new Events();

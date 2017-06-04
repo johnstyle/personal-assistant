@@ -1,18 +1,13 @@
-const Cylon = require('cylon');
+const cylon = require('cylon');
 const events = require('./events');
+const settings = require('./../settings');
 
-Cylon.robot({
+cylon.robot({
     connections: {
         speech: { adaptor: 'speech'}
     },
     devices: {
-        voice: {
-            driver: 'speech',
-            language: 'french',
-            gender: 'f',
-            variant: '4',
-            speed: 120
-        }
+        voice: { driver: "speech", voice: settings.lang + "+f3", speed: 150 }
     },
     work: function(my) {
         events.on('say', function(sentence) {

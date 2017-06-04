@@ -1,15 +1,18 @@
 const weather = require('openweather-apis');
-const moment = require('moment');
 const settings = require('./../../settings');
 
-weather.setLang(settings.services.weather.lang);
+weather.setLang(settings.lang);
 weather.setUnits(settings.services.weather.units);
 weather.setAPPID(settings.services.weather.key);
 
-module.exports = function (service, documents, callback) {
+module.exports = function (service, documents, words, callback) {
 
     if ('undefined' === typeof documents.location) {
-        console.log('Veuillez renseigner une localisation');
+        callback(['De quelle localité ?'], {
+            services: {weather: [service]},
+            documents: documents,
+            words: words
+        });
         return;
     }
 

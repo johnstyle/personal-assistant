@@ -3,6 +3,7 @@ const slugify = require('slugify');
 
 const settings = require('./../settings');
 const events = require('./events');
+const debug = require('./debug');
 
 const classifier = {
     data: {
@@ -20,7 +21,7 @@ const classifier = {
         }
         data = Object.assign({
             name: null,
-            type: null,
+            action: null,
             value: null
         }, data);
         this.data[type][category][this.slugify(data.name)] = data;
@@ -58,14 +59,6 @@ const classifier = {
             }
             words[wordIndex] = this.slugify(words[wordIndex]);
         }
-        for (const wordIndex in words) {
-            if (!words.hasOwnProperty(wordIndex)) {
-                continue;
-            }
-            if (2 >= words[wordIndex].length) {
-                words.splice(wordIndex, 1);
-            }
-        }
         return words;
     },
     slugify: function (str) {
@@ -75,9 +68,18 @@ const classifier = {
         const self = this;
         const classifier = {
             services: {},
-            documents: {}
+            documents: {},
+            words: []
         };
-        this.tokenize(str).forEach(function(token) {
+        const tokens = this.tokenize(str);
+        tokens.forEach(function(token, index, object) {
+            if (1 >= token.length) {
+                object.splice(index, 1);
+            }
+        });
+        debug('tokens', tokens);
+        tokens.forEach(function(token) {
+            let find = false;
             Object.keys(self.data.services).forEach(function(category) {
                 const services = self.data.services[category];
                 if (token in services) {
@@ -85,8 +87,12 @@ const classifier = {
                         classifier.services[category] = [];
                     }
                     classifier.services[category].push(services[token]);
+                    find = true;
                 }
             });
+            if (find) {
+                return;
+            }
             Object.keys(self.data.documents).forEach(function(category) {
                 const documents = self.data.documents[category];
                 if (token in documents) {
@@ -94,8 +100,16 @@ const classifier = {
                         classifier.documents[category] = [];
                     }
                     classifier.documents[category].push(documents[token]);
+                    find = true;
                 }
             });
+            if (find) {
+                return;
+            }
+            if (3 >= token.length) {
+                return;
+            }
+            classifier.words.push(token);
         });
         return classifier;
     }
@@ -105,5 +119,5 @@ fs.access(settings.classifierFile, fs.constants.R_OK | fs.constants.W_OK, functi
     if (!err) {
         classifier.data = JSON.parse(fs.readFileSync(settings.classifierFile, settings.charset));
     }
-    events.emit('classifier', classifier);
+    events.emit('classifier-ready', classifier);
 });
