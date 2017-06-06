@@ -1,18 +1,14 @@
 const weather = require('openweather-apis');
-const settings = require('./../../settings');
+const settings = require('./../../../settings');
 
 weather.setLang(settings.lang);
 weather.setUnits(settings.services.weather.units);
 weather.setAPPID(settings.services.weather.key);
 
-module.exports = function (service, documents, words, callback) {
+module.exports = function (service, documents, say) {
 
     if ('undefined' === typeof documents.location) {
-        callback(['De quelle localité ?'], {
-            services: {weather: [service]},
-            documents: documents,
-            words: words
-        });
+        say(['De quelle localité ?'], documents);
         return;
     }
 
@@ -28,7 +24,7 @@ module.exports = function (service, documents, words, callback) {
             obj.list.forEach(function(item) {
                 sentences.push("Il fera " + item.temp.day + "° avec " + item.weather[0].description);
             });
-            callback(sentences);
+            say(sentences);
         });
     });
 };

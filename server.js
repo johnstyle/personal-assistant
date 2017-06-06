@@ -8,7 +8,7 @@ console.log(clc.green('----------------------------------'));
 console.log(clc.green('✔ Lancement de l\'assistant'));
 
 require('./component/say');
-require('./component/classifier');
+require('./component/run');
 
 events.on('classifier-ready', function(classifier) {
     console.log(clc.green('✔ Chargement de la base de donnée'));

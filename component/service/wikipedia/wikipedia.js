@@ -1,22 +1,27 @@
 const request = require('request');
 const querystring = require('querystring');
-const settings = require('./../../settings');
+const settings = require('./../../../settings');
 
-module.exports = function (service, documents, words, say) {
+module.exports = function (service, documents, say) {
 
-    if (!words.length) {
-        say(['Que voulez-vous savoir ?']);
+    if ('undefined' === typeof documents.undefined) {
+        say(['Que voulez-vous savoir ?'], documents);
         return;
     }
 
     const baseUrl = 'https://' + settings.lang + '.wikipedia.org/w/api.php?';
+
+    let srsearch = [];
+    documents.undefined.forEach(function (document) {
+        srsearch.push(document.token);
+    });
 
     request.get({
         url: baseUrl + querystring.stringify({
             action: 'query',
             list: 'search',
             srwhat: 'text',
-            srsearch: words.join(' '),
+            srsearch: srsearch.join(' '),
             format: 'json'
         }),
         json: true,

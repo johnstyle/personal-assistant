@@ -6,33 +6,27 @@ const clc = require('cli-color');
 const settings = require('./settings');
 const events = require('./component/events');
 
-require('./component/classifier');
+require('./component/run');
 
-events.on('classifier', function(classifier) {
+events.on('classifier-ready', function(classifier) {
 
     console.log(clc.green('✔ Chargement de la base de donnée'));
 
-    glob(settings.trainningDirectory + '/documents/*.yml', function (er, files) {
+    glob(settings.dictionaryDirectory + '/*.yml', function (er, files) {
         files.forEach(function(file) {
             const data = yaml.safeLoad(fs.readFileSync(file, settings.charset));
-            Object.keys(data).forEach(function(category) {
-                const documents = data[category];
-                classifier.addDocuments(category, documents);
-                console.log(clc.green('✔ ' + documents.length + ' document(s) added to ' + category));
-            });
+            classifier.service.addDictionary(data);
+            console.log(clc.green('✔ Dictionary ' + data.name + ' added to ' + data.category));
         });
-        classifier.save();
+        classifier.service.save();
     });
 
-    glob(settings.trainningDirectory + '/services/*.yml', function (er, files) {
+    glob(settings.servicesDirectory + '/*/*.yml', function (er, files) {
         files.forEach(function(file) {
             const data = yaml.safeLoad(fs.readFileSync(file, settings.charset));
-            Object.keys(data).forEach(function(category) {
-                const services = data[category];
-                classifier.addServices(category, services);
-                console.log(clc.green('✔ ' + services.length + ' service(s) added to ' + category));
-            });
+            classifier.service.addService(data);
+            console.log(clc.green('✔ Service ' + data.name + ' added to ' + data.category));
         });
-        classifier.save();
+        classifier.service.save();
     });
 });

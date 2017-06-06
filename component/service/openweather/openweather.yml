@@ -1,0 +1,6 @@
+name: openweather
+category: weather
+require:
+  - location
+documents:
+  - Météo

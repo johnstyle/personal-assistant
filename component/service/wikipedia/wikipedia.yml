@@ -1,0 +1,4 @@
+name: wikipedia
+category: find
+documents:
+  - { name: Qui }

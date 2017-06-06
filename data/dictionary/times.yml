@@ -1,0 +1,16 @@
+name: times
+category: time
+documents:
+  - { name: Dimanche, action: day, value: 0 }
+  - { name: Lundi, action: day, value: 1 }
+  - { name: Mardi, action: day, value: 2 }
+  - { name: Mercredi, action: day, value: 3 }
+  - { name: Jeudi, action: day, value: 4 }
+  - { name: Vendredi, action: day, value: 5 }
+  - { name: Samedi, action: day, value: 6 }
+
+  - { name: Avant-hier, action: dayterm, value: -2 }
+  - { name: Hier, action: dayterm, value: -1 }
+  - { name: Aujourd\'hui, action: dayterm, value: 0 }
+  - { name: Demain, action: dayterm, value: 1 }
+  - { name: Après-demain, action: dayterm, value: 2 }

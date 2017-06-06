@@ -1,0 +1,13 @@
+name: questions
+category: question
+documents:
+  - { name: "Combien", action: "math" }
+  - { name: "Où", action: "location" }
+  - { name: "Qui" }
+  - { name: "Comment" }
+  - { name: "Quand" }
+  - { name: "Pourquoi" }
+  - { name: "[Le[s]?]?Quel[le]?[s]?" }
+  - { name: "Est-ce" }
+  - { name: "Donnes", action: "find" }
+  - { name: "Recherches", action: "find" }
