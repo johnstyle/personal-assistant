@@ -7,7 +7,8 @@ module.exports = class Synapse {
         this.container = container;
     }
     start() {
-        console.log(this.container.clc.green('✔ Chargement du composant Synapse'));
+        this.container.Prompt.success('Chargement du composant Synapse');
+        return this;
     }
     tokenize(str) {
         const self = this;
@@ -29,7 +30,7 @@ module.exports = class Synapse {
                 object.splice(index, 1);
             }
         });
-        debug('tokens', tokens);
+        self.container.Prompt.debug('tokens', tokens);
         tokens.forEach(function(token) {
             if ('undefined' !== typeof self.service.documents[token]) {
                 Object.keys(self.service.documents[token]).forEach(function (documentIndex) {

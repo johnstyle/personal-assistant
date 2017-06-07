@@ -7,8 +7,8 @@ module.exports = class Voice {
         this.container = container;
     }
     start() {
-        console.log(this.container.clc.green('✔ Chargement du composant Voice'));
         const self = this;
+        self.container.Prompt.success('Chargement du composant Voice');
         cylon.robot({
             connections: {
                 speech: { adaptor: 'speech'}
@@ -17,10 +17,11 @@ module.exports = class Voice {
                 voice: { driver: "speech", voice: self.container.settings.lang + "+f3", speed: 150 }
             },
             work: function(my) {
-                self.container.events.on('say', function(sentence) {
+                self.container.Events.on('say', function(sentence) {
                     my.voice.say(sentence);
                 });
             }
         }).start();
+        return this;
     }
 };

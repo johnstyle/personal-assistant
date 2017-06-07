@@ -6,3 +6,4 @@ const core = new Core();
 core.startMemory();
 core.startBrain();
 core.startVoice();
+core.run();

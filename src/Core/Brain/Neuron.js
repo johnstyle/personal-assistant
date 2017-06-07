@@ -5,6 +5,7 @@ module.exports = class Neuron {
         this.container = container;
     }
     start() {
-        console.log(this.container.clc.green('✔ Chargement du composant Neuron'));
+        this.container.Prompt.success('Chargement du composant Neuron');
+        return this;
     }
 };

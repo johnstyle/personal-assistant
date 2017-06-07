@@ -5,7 +5,7 @@ module.exports = class DeclarativeMemory {
         this.container = container;
     }
     start() {
-        console.log(this.container.clc.green('✔ Chargement du composant DeclarativeMemory'));
-
+        this.container.Prompt.success('Chargement du composant DeclarativeMemory');
+        return this;
     }
 };

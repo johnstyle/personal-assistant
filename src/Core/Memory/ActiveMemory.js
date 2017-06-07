@@ -5,6 +5,7 @@ module.exports = class ActiveMemory {
         this.container = container;
     }
     start() {
-        console.log(this.container.clc.green('✔ Chargement du composant ActiveMemory'));
+        this.container.Prompt.success('Chargement du composant ActiveMemory');
+        return this;
     }
 };
