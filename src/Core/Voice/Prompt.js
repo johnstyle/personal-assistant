@@ -1,5 +1,5 @@
 const util = require('util');
-const args = require( 'argv' ).option({
+const args = require('argv').option({
     name: 'debug',
     type: 'boolean'
 }).run();
@@ -9,10 +9,10 @@ module.exports = class Prompt {
         this.container = container;
     }
     start() {
-        this.success('Chargement du composant Prompt');
+        this.success('Loading the Prompt component');
         return this;
     }
-    debug(message) {
+    debug(message, data) {
         if (args.options.debug) {
             console.log(this.container.clc.yellow('[Debug] ' + message + ' : ' + util.inspect(data)));
         }

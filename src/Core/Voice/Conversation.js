@@ -11,47 +11,28 @@ module.exports = class Conversation {
     }
     start() {
         const self = this;
-        self.container.Prompt.success('Chargement du composant Conversation');
+        self.container.Prompt.success('Loading the Conversation component');
         self.container.Events.on('ready', function() {
             self.container.Events.emit('conversation-ready', self);
         });
-        return this;
+        return self;
     }
-    question(text, context) {
+    question(text) {
         const self = this;
         let prompt = '> ';
         if ('undefined' !== typeof text) {
             self.container.Events.emit('say', [text]);
-            prompt = this.container.clc.blue(text) + "\n> ";
+            prompt = self.container.clc.blue(text) + "\n> ";
         }
-        if ('undefined' === typeof context) {
-            context = {};
-        }
-        self.readline.question(prompt, function (answer) {
-            const documents = objectAssign({}, context, self.classifier.classify(answer));
-            this.container.debug.log('documents', documents);
-            let findService = false;
-            Object.keys(documents).forEach(function(category) {
-                documents[category].forEach(function(document) {
-                    if ('service' === document.type) {
-                        self.answer(document.service.name, document, documents);
-                        findService = true;
-                    }
-                });
-            });
-            if (!findService) {
-                self.answer('default', {}, documents);
-            }
+        self.readline.question(prompt, function (question) {
+            self.answer(question);
         });
     }
-    answer(name, service, documents) {
+    answer(question) {
         const self = this;
-        require('.' + settings.servicesDirectory + '/' + name + '/' + name)(service, documents, function (sentences, context) {
-            sentences.forEach(function(sentence) {
-                self.container.Events.emit('say', sentence);
-                console.log(this.container.clc.blue(sentence));
-            });
-            self.question(undefined, context);
-        });
+        let answer = self.container.Cortex.processing(question);
+        self.container.Events.emit('say', answer);
+        console.log(self.container.clc.blue(answer));
+        self.question();
     }
 };

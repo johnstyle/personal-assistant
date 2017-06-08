@@ -8,7 +8,7 @@ module.exports = class Voice {
     }
     start() {
         const self = this;
-        self.container.Prompt.success('Chargement du composant Voice');
+        self.container.Prompt.success('Loading the Voice component');
         cylon.robot({
             connections: {
                 speech: { adaptor: 'speech'}

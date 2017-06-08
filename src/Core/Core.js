@@ -5,6 +5,7 @@ const Voice = require('./Voice/Voice');
 const Conversation = require('./Voice/Conversation');
 const ActiveMemory = require('./Memory/ActiveMemory');
 const DeclarativeMemory = require('./Memory/DeclarativeMemory');
+const Cortex = require('./Brain/Cortex');
 const Synapse = require('./Brain/Synapse');
 const Neuron = require('./Brain/Neuron');
 
@@ -17,6 +18,7 @@ module.exports = class Core {
         (new DeclarativeMemory(this.container)).start();
     }
     startBrain() {
+        (new Cortex(this.container)).start();
         (new Neuron(this.container)).start();
         (new Synapse(this.container)).start();
     }
