@@ -11,7 +11,7 @@
     "events": "^1.1.1",
     "fs": "0.0.2",
     "glob": "^7.1.2",
-    "google-auth-library": "^0.10.0",
+    "google-auth-library": "^0.12.0",
     "googleapis": "^19.0.0",
     "js-yaml": "^3.8.4",
     "moment": "^2.18.1",
