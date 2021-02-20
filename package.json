@@ -9,7 +9,7 @@
     "cylon-speech": "^0.10.0",
     "deep-assign": "^2.0.0",
     "events": "^1.1.1",
-    "fs": "0.0.1-security",
+    "fs": "0.0.2",
     "glob": "^7.1.2",
     "google-auth-library": "^0.10.0",
     "googleapis": "^19.0.0",
